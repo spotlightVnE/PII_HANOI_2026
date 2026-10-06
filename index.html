@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PII 2026 – TP. Hà Nội</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+:root{--bg:#fff;--sf:#fff;--sf2:#f6f7f9;--bd:#e2e5ec;--tx:#222;--tx2:#555;--tx3:#aaa;--acc:#1a6cc4}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,Helvetica,sans-serif;font-size:18px;background:var(--bg);color:var(--tx);-webkit-text-size-adjust:100%}
+.wrap{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
+header{text-align:left;margin-bottom:10px}
+header h1{font-size:18px;font-weight:700}
+header .sub{color:var(--tx2);font-size:18px;margin-top:2px}
+.cleg{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:18px;color:var(--tx2)}
+.cbar{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,#34d399,#fbbf24,#f97316)}
+.nav{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;min-height:22px}
+.bbtn{display:none;align-items:center;gap:3px;padding:4px 12px;border-radius:5px;font-size:18px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:#fff;color:var(--acc);font-family:Arial,Helvetica,sans-serif}
+.bbtn:hover{border-color:var(--acc)}
+.bbtn.show{display:inline-flex}
+.bc{display:flex;align-items:center;gap:4px;font-size:18px;flex-wrap:wrap}
+.bc a{color:var(--acc);text-decoration:none;cursor:pointer;font-weight:600}
+.bc a:hover{text-decoration:underline}
+.bc .sep{color:var(--tx3)}
+.bc .cur{color:var(--tx);font-weight:700}
+.guide{font-size:18px;color:var(--tx3);margin-bottom:4px;font-style:italic}
+.card{max-width:1000px;border:1px solid var(--bd);border-radius:8px;padding:10px 4px 6px 0;overflow-x:auto;background:#fff}
+svg text{font-family:Arial,Helvetica,sans-serif}
+.tt{position:fixed;pointer-events:none;background:#fff;border:1px solid #dde;border-radius:7px;padding:8px 12px;box-shadow:0 3px 12px rgba(0,0,0,.1);font-size:18px;z-index:100;opacity:0;transition:opacity .1s;max-width:320px;color:#222;font-family:Arial,Helvetica,sans-serif}
+.tt.show{opacity:1}
+.tt .tn{font-weight:700;margin-bottom:3px;line-height:1.3}
+.tt .tr{display:flex;justify-content:space-between;gap:12px}
+.tt .tl{color:#888}
+.tt .tv{font-weight:700}
+@media(max-width:600px){
+  body{font-size:14px}
+  .wrap{padding:8px 4px 24px}
+  header h1{font-size:14px}
+  header .sub{font-size:12px}
+  .cleg{font-size:12px;gap:4px;margin-top:3px}
+  .cbar{width:70px;height:5px}
+  .nav{gap:4px;margin-bottom:3px}
+  .bbtn{font-size:12px;padding:3px 8px}
+  .bc{font-size:12px}
+  .guide{font-size:12px;margin-bottom:3px}
+  .card{padding:6px 2px 4px 0;border-radius:6px}
+  .tt{font-size:13px;padding:6px 8px;max-width:220px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Chỉ số Đổi mới sáng tạo PII 2026</h1>
+    <div class="sub">TP. Hà Nội · 63,80 điểm · Xếp hạng #1/34 tỉnh thành</div>
+    <div class="cleg"><span>Hạng cao</span><div class="cbar"></div><span>Hạng thấp</span></div>
+  </header>
+  <div class="nav">
+    <button class="bbtn" id="bb" onclick="goBack()">← Quay lại</button>
+    <div class="bc" id="bc"></div>
+  </div>
+  <div class="guide" id="gd">Chọn để xem chi tiết thêm</div>
+  <div class="card"><svg id="ch"></svg></div>
+</div>
+<div class="tt" id="tt"></div>
+<script>
+const fmt=v=>String(v).replace('.',',');
+const rCol=r=>{const t=(r-1)/33,a=[52,211,153],b=[249,115,22];return`rgb(${a.map((v,i)=>Math.round(v+(b[i]-v)*t))})`};
+const P=[
+{id:'1',n:'Thể chế',s:50.17,r:25,subs:[
+  {id:'1.1',n:'Môi trường chính sách',s:48.04,r:29,inds:[
+    {id:'1.1.1',n:'Chính sách thúc đẩy KHCN&ĐMST phục vụ phát triển KT-XH',s:74.62,r:27},
+    {id:'1.1.2',n:'Thiết chế pháp lý và an ninh trật tự',s:4.16,r:33},
+    {id:'1.1.3',n:'Chính sách hỗ trợ doanh nghiệp',s:65.34,r:3}]},
+  {id:'1.2',n:'Môi trường kinh doanh',s:52.29,r:18,inds:[
+    {id:'1.2.1',n:'Chi phí gia nhập thị trường',s:49.18,r:21},
+    {id:'1.2.2',n:'Tính năng động của chính quyền địa phương',s:68.43,r:18},
+    {id:'1.2.3',n:'Cải cách hành chính',s:80.46,r:5},
+    {id:'1.2.4',n:'Cạnh tranh bình đẳng',s:11.12,r:33}]}]},
+{id:'2',n:'Vốn con người và nghiên cứu',s:86.68,r:1,subs:[
+  {id:'2.1',n:'Giáo dục',s:94.89,r:3,inds:[
+    {id:'2.1.1',n:'Điểm trung bình thi tốt nghiệp THPT',s:89.34,r:2},
+    {id:'2.1.2',n:'Học sinh đạt giải kỳ thi Học sinh giỏi quốc gia THPT',s:100,r:1},
+    {id:'2.1.3',n:'Chi cho GD&ĐT bình quân 1 người đi học (triệu đồng)',s:95.33,r:3}]},
+  {id:'2.2',n:'Nghiên cứu và phát triển',s:78.48,r:4,inds:[
+    {id:'2.2.1',n:'Nhân lực NC&PT (toàn thời gian)/10.000 dân',s:100,r:1},
+    {id:'2.2.2',n:'Chi NSĐP cho khoa học và công nghệ/GRDP (%)',s:13.93,r:26},
+    {id:'2.2.3',n:'Chi cho R&D/GRDP (%)',s:100,r:1},
+    {id:'2.2.4',n:'Số tổ chức KH&CN/10.000 dân',s:100,r:1}]}]},
+{id:'3',n:'Cơ sở hạ tầng',s:63.52,r:11,subs:[
+  {id:'3.1',n:'Hạ tầng ICT',s:92.99,r:2,inds:[
+    {id:'3.1.1',n:'Hạ tầng số',s:85.99,r:12},
+    {id:'3.1.2',n:'Quản trị điện tử',s:100,r:1}]},
+  {id:'3.2',n:'Cơ sở hạ tầng chung và môi trường sinh thái',s:34.04,r:30,inds:[
+    {id:'3.2.1',n:'Cơ sở hạ tầng chung',s:74.39,r:7},
+    {id:'3.2.2',n:'Tỉ lệ đất công nghiệp đã được xây dựng kết cấu hạ tầng (%)',s:27.73,r:24},
+    {id:'3.2.3',n:'Quản trị môi trường',s:0,r:34}]}]},
+{id:'4',n:'Trình độ phát triển của thị trường',s:85.49,r:1,subs:[
+  {id:'4.1',n:'Tài chính và đầu tư',s:79.29,r:2,inds:[
+    {id:'4.1.1',n:'Tín dụng cho khu vực tư nhân/1.000 lao động (tỷ đồng)',s:100,r:1},
+    {id:'4.1.2',n:'Tài chính vi mô/GRDP (%)',s:94.47,r:5},
+    {id:'4.1.3',n:'Vốn SXKD bình quân hàng năm của các DN (tỷ đồng)',s:82.15,r:2},
+    {id:'4.1.4',n:'Giá trị tài sản cố định và đầu tư tài chính dài hạn của DN (tỷ đồng)',s:40.55,r:13}]},
+  {id:'4.2',n:'Quy mô thị trường',s:91.68,r:1,inds:[
+    {id:'4.2.1',n:'Số DN ngành dịch vụ và chuyên môn, KH&CN/1.000 DN',s:75.04,r:6},
+    {id:'4.2.2',n:'Mật độ DN/1.000 dân',s:100,r:1},
+    {id:'4.2.3',n:'Đóng góp trong GDP cả nước (%)',s:100,r:1}]}]},
+{id:'5',n:'Trình độ phát triển của doanh nghiệp',s:52.57,r:2,subs:[
+  {id:'5.1',n:'Lao động có kiến thức',s:74.22,r:1,inds:[
+    {id:'5.1.1',n:'Tỷ lệ chi đào tạo lao động trong tổng chi của DN (%)',s:22.67,r:28},
+    {id:'5.1.2',n:'Tỷ lệ lao động từ 15 tuổi trở lên đã qua đào tạo (%)',s:100,r:1},
+    {id:'5.1.3',n:'Tỷ lệ doanh nghiệp có hoạt động R&D (%)',s:100,r:1}]},
+  {id:'5.2',n:'Liên kết sáng tạo',s:35.78,r:12,inds:[
+    {id:'5.2.1',n:'Hợp tác nghiên cứu giữa tổ chức KH&CN và DN (%)',s:46.69,r:15},
+    {id:'5.2.2',n:'Số dự án đầu tư đang hoạt động trong các khu công nghiệp/1.000 DN CBCT',s:5.65,r:32},
+    {id:'5.2.3',n:'Số dự án đầu tư đang hoạt động trong các cụm công nghiệp/1.000 DN CBCT',s:55,r:9}]},
+  {id:'5.3',n:'Hấp thu tri thức',s:47.70,r:21,inds:[
+    {id:'5.3.1',n:'Đầu tư trực tiếp của nước ngoài/GRDP (%)',s:9.57,r:15},
+    {id:'5.3.2',n:'Tỷ lệ DN có hoạt động ĐMST (%)',s:100,r:1},
+    {id:'5.3.3',n:'Số lượng doanh nghiệp có chứng chỉ ISO/1.000 DN',s:33.54,r:11}]}]},
+{id:'6',n:'Sản phẩm tri thức, sáng tạo và công nghệ',s:69.59,r:1,subs:[
+  {id:'6.1',n:'Sáng tạo tri thức',s:100,r:1,inds:[
+    {id:'6.1.1',n:'Đơn đăng ký sáng chế và giải pháp hữu ích/10.000 dân',s:100,r:1},
+    {id:'6.1.2',n:'Đơn đăng kí giống cây trồng/10.000 dân',s:100,r:1}]},
+  {id:'6.2',n:'Tài sản vô hình',s:59.73,r:3,inds:[
+    {id:'6.2.1',n:'Đơn đăng ký nhãn hiệu/1.000 DN',s:100,r:1},
+    {id:'6.2.2',n:'Đơn đăng kí nhãn hiệu tập thể và nhãn hiệu chứng nhận/10.000 dân',s:38.56,r:14},
+    {id:'6.2.3',n:'Đơn đăng ký thiết kế kiểu dáng công nghiệp/10.000 dân',s:100,r:1},
+    {id:'6.2.4',n:'Đơn đăng ký chỉ dẫn địa lý/10.000 dân',s:0.34,r:33}]},
+  {id:'6.3',n:'Lan tỏa tri thức',s:49.04,r:2,inds:[
+    {id:'6.3.1',n:'Số DN mới thành lập/10.000 dân',s:84.12,r:2},
+    {id:'6.3.2',n:'Số DN KH&CN và DN đủ điều kiện là DN KH&CN/1.000 DN',s:33.71,r:15},
+    {id:'6.3.3',n:'Tỷ lệ DN/DA khởi nghiệp sáng tạo trong tổng số DN mới thành lập (%)',s:1.90,r:29},
+    {id:'6.3.4',n:'Số sản phẩm OCOP 4 sao trở lên/10.000 dân',s:76.44,r:4}]}]},
+{id:'7',n:'Tác động',s:50.26,r:9,subs:[
+  {id:'7.1',n:'Tác động đến sản xuất - kinh doanh',s:13.73,r:32,inds:[
+    {id:'7.1.1',n:'Chỉ số sản xuất công nghiệp',s:15.57,r:28},
+    {id:'7.1.2',n:'Giá trị xuất khẩu/GRDP',s:14.66,r:23},
+    {id:'7.1.3',n:'Tốc độ tăng năng suất lao động',s:10.96,r:31}]},
+  {id:'7.2',n:'Tác động đến kinh tế - xã hội',s:86.79,r:2,inds:[
+    {id:'7.2.1',n:'Tốc độ giảm nghèo',s:100,r:1},
+    {id:'7.2.2',n:'Tỷ lệ lao động có việc làm trong nền kinh tế trên tổng dân số (%)',s:47.14,r:25},
+    {id:'7.2.3',n:'Thu nhập bình quân đầu người (triệu đồng/tháng)',s:100,r:1},
+    {id:'7.2.4',n:'Chỉ số phát triển con người',s:100,r:1}]}]}
+];
+const tt=document.getElementById('tt'),bcEl=document.getElementById('bc'),
+      bb=document.getElementById('bb'),gd=document.getElementById('gd');
+let ns=[];
+function goBack(){if(ns.length>0)ns.pop()();}
+function setBC(parts){
+  bcEl.innerHTML='';
+  parts.forEach((p,i)=>{
+    if(i>0)bcEl.insertAdjacentHTML('beforeend','<span class="sep">›</span>');
+    if(p.fn){const a=document.createElement('a');a.textContent=p.t;a.addEventListener('click',p.fn);bcEl.appendChild(a);}
+    else bcEl.insertAdjacentHTML('beforeend',`<span class="cur">${p.t}</span>`);
+  });
+  bb.className=ns.length>0?'bbtn show':'bbtn';
+}
+function mH(text,w,fs){
+  let m=document.getElementById('_m');
+  if(!m){m=document.createElement('div');m.id='_m';
+    m.style.cssText='position:absolute;visibility:hidden;font-family:Arial,Helvetica,sans-serif;line-height:1.3;white-space:normal;word-break:break-word;text-align:right;';
+    document.body.appendChild(m);}
+  m.style.width=w+'px';m.style.fontSize=fs+'px';m.textContent=text;return m.offsetHeight;
+}
+function draw(items,gl,clickFn,byRank){
+  const svg=d3.select('#ch');svg.selectAll('*').remove();tt.classList.remove('show');
+  if(byRank)items.sort((a,b)=>a.r-b.r);
+  const mob=window.innerWidth<550;
+  const FS=mob?14:18;
+  const AXIS_FS=mob?11:14;
+  const labelW=mob?Math.round(window.innerWidth*.38):300;
+  const GAP=mob?12:20; // gap between labels and chart area
+  const cL=labelW+GAP;
+  const cR=mob?14:28;
+  const totalW=Math.min(1000,Math.max(320,document.querySelector('.card').clientWidth-6));
+  const dotArea=totalW-cL-cR;
+  const cnt=items.length;
+  const dotR=mob?7:10;
+  const rowH=items.map(it=>Math.max(mob?34:42,mH(it.n,labelW-8,FS)+12));
+  const cumY=[0];rowH.forEach((h,i)=>cumY.push(cumY[i]+h));
+  const topP=mob?22:26;
+  const totalH=topP+cumY[cnt]+4;
+  svg.attr('width',totalW).attr('height',totalH).attr('viewBox',`0 0 ${totalW} ${totalH}`);
+  const x=d3.scaleLinear().domain([0.5,34.5]).range([0,dotArea]);
+
+  // "Hạng" label
+  svg.append('text').attr('x',cL+dotArea/2).attr('y',topP-12)
+    .attr('text-anchor','middle').attr('fill','var(--tx2)')
+    .attr('font-size',AXIS_FS).attr('font-weight','700').text('Hạng');
+
+  // Grid with #
+  (mob?[1,10,20,34]:[1,5,10,15,20,25,30,34]).forEach(t=>{
+    const tx=cL+x(t);
+    svg.append('line').attr('x1',tx).attr('y1',topP).attr('x2',tx).attr('y2',topP+cumY[cnt])
+      .attr('stroke','var(--bd)').attr('stroke-width',.5);
+    svg.append('text').attr('x',tx).attr('y',topP-2).attr('text-anchor','middle')
+      .attr('fill','var(--tx3)').attr('font-size',mob?'10':'12').text('#'+t);
+  });
+
+  items.forEach((it,i)=>{
+    const yT=topP+cumY[i],rh=rowH[i],yM=yT+rh/2;
+    const col=rCol(it.r),dx=cL+x(it.r),cc=!!clickFn;
+    if(i%2===0)svg.append('rect').attr('x',0).attr('y',yT).attr('width',totalW).attr('height',rh).attr('fill','var(--sf2)').attr('opacity',.55);
+
+    // Label — RIGHT aligned, with gap before axis
+    const fo=svg.append('foreignObject').attr('x',4).attr('y',yT+1).attr('width',labelW-4).attr('height',rh-2);
+    fo.append('xhtml:div')
+      .style('font-family','Arial, Helvetica, sans-serif')
+      .style('font-size',FS+'px').style('font-weight','500').style('color','var(--tx)')
+      .style('line-height','1.3').style('display','flex').style('align-items','center')
+      .style('height','100%').style('word-break','break-word')
+      .style('cursor',cc?'pointer':'default')
+      .style('justify-content','flex-end')
+      .style('text-align','right')
+      .style('padding','0 0 0 4px')
+      .text(it.n)
+      .on('click',()=>{if(cc)clickFn(it,i);});
+
+    // Line
+    svg.append('line').attr('x1',cL).attr('y1',yM).attr('x2',cL).attr('y2',yM)
+      .attr('stroke',col).attr('stroke-width',2).attr('stroke-opacity',.2).attr('stroke-linecap','round')
+      .transition().duration(320).delay(i*16).attr('x2',dx);
+    // Dot
+    svg.append('circle').attr('cx',cL).attr('cy',yM).attr('r',dotR)
+      .attr('fill',col).attr('opacity',0).attr('cursor',cc?'pointer':'default')
+      .transition().duration(320).delay(i*16).attr('cx',dx).attr('opacity',.9);
+    // Rank in dot
+    svg.append('text').attr('x',cL).attr('y',yM+1)
+      .attr('text-anchor','middle').attr('dominant-baseline','middle')
+      .attr('fill','#fff').attr('font-size',mob?'9':'11').attr('font-weight','700')
+      .attr('pointer-events','none').attr('opacity',0).text(it.r)
+      .transition().duration(320).delay(i*16).attr('x',dx).attr('opacity',1);
+
+    // Hover+click
+    svg.append('rect').attr('x',0).attr('y',yT).attr('width',totalW).attr('height',rh)
+      .attr('fill','transparent').attr('cursor',cc?'pointer':'default')
+      .on('mousemove touchstart',(e)=>{
+        const ev=e.touches?e.touches[0]:e;
+        tt.innerHTML=`<div class="tn">${it.n}</div>
+          ${gl?`<div class="tr"><span class="tl">Nhóm</span><span class="tv">${gl}</span></div>`:''}
+          <div class="tr"><span class="tl">Điểm số</span><span class="tv">${fmt(it.s)}</span></div>
+          <div class="tr"><span class="tl">Thứ hạng</span><span class="tv" style="color:${col}">#${it.r}/34</span></div>`;
+        tt.classList.add('show');
+        let tx2=ev.clientX+10,ty2=ev.clientY-10;
+        if(tx2+280>window.innerWidth)tx2=ev.clientX-280;
+        if(ty2+80>window.innerHeight)ty2=ev.clientY-80;
+        if(tx2<2)tx2=2;
+        tt.style.left=tx2+'px';tt.style.top=ty2+'px';
+      },{passive:true})
+      .on('mouseleave touchend',()=>tt.classList.remove('show'))
+      .on('click',()=>{if(cc)clickFn(it,i);});
+  });
+}
+function showP(rs){
+  if(rs!==false)ns=[];setBC([]);
+  gd.textContent='Chọn để xem chi tiết thêm';
+  draw(P.map(p=>({...p})),null,(it)=>{
+    const pi=P.findIndex(p=>p.id===it.id);ns.push(()=>showP(false));showS(pi);},false);
+}
+function showS(pi){
+  const p=P[pi];setBC([{t:p.n}]);
+  gd.textContent='Chọn để xem chi tiết thêm';
+  draw(p.subs.map(s=>({...s})),p.n,(it)=>{
+    const si=p.subs.findIndex(s=>s.id===it.id);ns.push(()=>showS(pi));showI(pi,si);},true);
+}
+function showI(pi,si){
+  const p=P[pi],sub=p.subs[si];
+  setBC([{t:p.n,fn:()=>{ns=[()=>showP(false)];showS(pi);}},{t:sub.n}]);
+  gd.textContent='Di chuột hoặc chạm để xem điểm số';
+  draw(sub.inds.map(d=>({...d})),sub.n,null,true);
+}
+showP();
+window.addEventListener('resize',()=>{if(ns.length===0)showP(false);});
+</script>
+</body>
+</html>
