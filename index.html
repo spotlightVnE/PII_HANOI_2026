@@ -10,10 +10,10 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:Arial,Helvetica,sans-serif;font-size:18px;background:var(--bg);color:var(--tx);-webkit-text-size-adjust:100%}
 .wrap{max-width:1000px;margin:0 auto;padding:14px 12px 40px}
-header{text-align:left;margin-bottom:10px}
-header h1{font-size:18px;font-weight:700}
-header .sub{color:var(--tx2);font-size:18px;margin-top:2px}
-.cleg{display:flex;align-items:center;gap:6px;margin-top:5px;font-size:18px;color:var(--tx2)}
+header{text-align:left;margin-bottom:20px}
+header h1{font-size:22px;font-weight:700}
+header .sub{color:var(--tx2);font-size:18px;margin-top:8px}
+.cleg{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:18px;color:var(--tx2)}
 .cbar{width:90px;height:6px;border-radius:3px;background:linear-gradient(90deg,#34d399,#fbbf24,#f97316)}
 .nav{display:flex;align-items:center;gap:6px;margin-bottom:4px;flex-wrap:wrap;min-height:22px}
 .bbtn{display:none;align-items:center;gap:3px;padding:4px 12px;border-radius:5px;font-size:18px;font-weight:600;cursor:pointer;border:1px solid var(--bd);background:#fff;color:var(--acc);font-family:Arial,Helvetica,sans-serif}
@@ -36,9 +36,10 @@ svg text{font-family:Arial,Helvetica,sans-serif}
 @media(max-width:600px){
   body{font-size:14px}
   .wrap{padding:8px 4px 24px}
-  header h1{font-size:14px}
-  header .sub{font-size:12px}
-  .cleg{font-size:12px;gap:4px;margin-top:3px}
+  header{margin-bottom:14px}
+  header h1{font-size:18px}
+  header .sub{font-size:12px;margin-top:5px}
+  .cleg{font-size:12px;gap:5px;margin-top:8px}
   .cbar{width:70px;height:5px}
   .nav{gap:4px;margin-bottom:3px}
   .bbtn{font-size:12px;padding:3px 8px}
@@ -53,14 +54,14 @@ svg text{font-family:Arial,Helvetica,sans-serif}
 <div class="wrap">
   <header>
     <h1>Chỉ số Đổi mới sáng tạo PII 2026</h1>
-    <div class="sub">TP. Hà Nội · 63,80 điểm · Xếp hạng #1/34 tỉnh thành</div>
+    <div class="sub">TP Hà Nội - 63,80 điểm - Xếp hạng #1/34 tỉnh thành</div>
     <div class="cleg"><span>Hạng cao</span><div class="cbar"></div><span>Hạng thấp</span></div>
   </header>
   <div class="nav">
     <button class="bbtn" id="bb" onclick="goBack()">← Quay lại</button>
     <div class="bc" id="bc"></div>
   </div>
-  <div class="guide" id="gd">Chọn để xem chi tiết thêm</div>
+  <div class="guide" id="gd">Chọn chấm tròn để xem thêm</div>
   <div class="card"><svg id="ch"></svg></div>
 </div>
 <div class="tt" id="tt"></div>
@@ -119,7 +120,7 @@ const P=[
     {id:'5.3.1',n:'Đầu tư trực tiếp của nước ngoài/GRDP (%)',s:9.57,r:15},
     {id:'5.3.2',n:'Tỷ lệ DN có hoạt động ĐMST (%)',s:100,r:1},
     {id:'5.3.3',n:'Số lượng doanh nghiệp có chứng chỉ ISO/1.000 DN',s:33.54,r:11}]}]},
-{id:'6',n:'Sản phẩm tri thức, sáng tạo và công nghệ',s:69.59,r:1,subs:[
+{id:'6',n:'Sản phẩm tri thức, sáng tạo\nvà công nghệ',s:69.59,r:1,subs:[
   {id:'6.1',n:'Sáng tạo tri thức',s:100,r:1,inds:[
     {id:'6.1.1',n:'Đơn đăng ký sáng chế và giải pháp hữu ích/10.000 dân',s:100,r:1},
     {id:'6.1.2',n:'Đơn đăng kí giống cây trồng/10.000 dân',s:100,r:1}]},
@@ -160,33 +161,34 @@ function setBC(parts){
 function mH(text,w,fs){
   let m=document.getElementById('_m');
   if(!m){m=document.createElement('div');m.id='_m';
-    m.style.cssText='position:absolute;visibility:hidden;font-family:Arial,Helvetica,sans-serif;line-height:1.3;white-space:normal;word-break:break-word;text-align:right;';
+    m.style.cssText='position:absolute;visibility:hidden;font-family:Arial,Helvetica,sans-serif;line-height:1.3;white-space:pre-line;word-break:break-word;text-align:right;';
     document.body.appendChild(m);}
   m.style.width=w+'px';m.style.fontSize=fs+'px';m.textContent=text;return m.offsetHeight;
 }
 function draw(items,gl,clickFn,byRank){
   const svg=d3.select('#ch');svg.selectAll('*').remove();tt.classList.remove('show');
-  if(byRank)items.sort((a,b)=>a.r-b.r);
+  items.sort((a,b)=>a.r-b.r||a.id.localeCompare(b.id,undefined,{numeric:true}));
   const mob=window.innerWidth<550;
   const FS=mob?14:18;
-  const AXIS_FS=mob?11:14;
-  const labelW=mob?Math.round(window.innerWidth*.38):300;
+  const AXIS_FS=mob?12:16;
+  const labelW=mob?Math.round(window.innerWidth*.38):320;
   const GAP=mob?12:20; // gap between labels and chart area
   const cL=labelW+GAP;
   const cR=mob?14:28;
   const totalW=Math.min(1000,Math.max(320,document.querySelector('.card').clientWidth-6));
   const dotArea=totalW-cL-cR;
   const cnt=items.length;
-  const dotR=mob?7:10;
-  const rowH=items.map(it=>Math.max(mob?34:42,mH(it.n,labelW-8,FS)+12));
+  const dotR=mob?10:13;
+  const maxH=Math.max(mob?38:48,...items.map(it=>mH(it.n,labelW-8,FS)+12));
+  const rowH=items.map(()=>maxH);
   const cumY=[0];rowH.forEach((h,i)=>cumY.push(cumY[i]+h));
-  const topP=mob?22:26;
+  const topP=mob?40:48;
   const totalH=topP+cumY[cnt]+4;
   svg.attr('width',totalW).attr('height',totalH).attr('viewBox',`0 0 ${totalW} ${totalH}`);
   const x=d3.scaleLinear().domain([0.5,34.5]).range([0,dotArea]);
 
   // "Hạng" label
-  svg.append('text').attr('x',cL+dotArea/2).attr('y',topP-12)
+  svg.append('text').attr('x',cL+dotArea/2).attr('y',mob?13:16)
     .attr('text-anchor','middle').attr('fill','var(--tx2)')
     .attr('font-size',AXIS_FS).attr('font-weight','700').text('Hạng');
 
@@ -195,8 +197,8 @@ function draw(items,gl,clickFn,byRank){
     const tx=cL+x(t);
     svg.append('line').attr('x1',tx).attr('y1',topP).attr('x2',tx).attr('y2',topP+cumY[cnt])
       .attr('stroke','var(--bd)').attr('stroke-width',.5);
-    svg.append('text').attr('x',tx).attr('y',topP-2).attr('text-anchor','middle')
-      .attr('fill','var(--tx3)').attr('font-size',mob?'10':'12').text('#'+t);
+    svg.append('text').attr('x',tx).attr('y',topP-6).attr('text-anchor','middle')
+      .attr('fill','var(--tx3)').attr('font-size',mob?'11':'14').text('#'+t);
   });
 
   items.forEach((it,i)=>{
@@ -210,7 +212,7 @@ function draw(items,gl,clickFn,byRank){
       .style('font-family','Arial, Helvetica, sans-serif')
       .style('font-size',FS+'px').style('font-weight','500').style('color','var(--tx)')
       .style('line-height','1.3').style('display','flex').style('align-items','center')
-      .style('height','100%').style('word-break','break-word')
+      .style('height','100%').style('word-break','break-word').style('white-space','pre-line')
       .style('cursor',cc?'pointer':'default')
       .style('justify-content','flex-end')
       .style('text-align','right')
@@ -229,7 +231,7 @@ function draw(items,gl,clickFn,byRank){
     // Rank in dot
     svg.append('text').attr('x',cL).attr('y',yM+1)
       .attr('text-anchor','middle').attr('dominant-baseline','middle')
-      .attr('fill','#fff').attr('font-size',mob?'9':'11').attr('font-weight','700')
+      .attr('fill','#fff').attr('font-size',mob?'11':'14').attr('font-weight','700')
       .attr('pointer-events','none').attr('opacity',0).text(it.r)
       .transition().duration(320).delay(i*16).attr('x',dx).attr('opacity',1);
 
@@ -255,20 +257,20 @@ function draw(items,gl,clickFn,byRank){
 }
 function showP(rs){
   if(rs!==false)ns=[];setBC([]);
-  gd.textContent='Chọn để xem chi tiết thêm';
+  gd.textContent='Chọn chấm tròn để xem thêm';
   draw(P.map(p=>({...p})),null,(it)=>{
     const pi=P.findIndex(p=>p.id===it.id);ns.push(()=>showP(false));showS(pi);},false);
 }
 function showS(pi){
   const p=P[pi];setBC([{t:p.n}]);
-  gd.textContent='Chọn để xem chi tiết thêm';
+  gd.textContent='Chọn chấm tròn để xem thêm';
   draw(p.subs.map(s=>({...s})),p.n,(it)=>{
     const si=p.subs.findIndex(s=>s.id===it.id);ns.push(()=>showS(pi));showI(pi,si);},true);
 }
 function showI(pi,si){
   const p=P[pi],sub=p.subs[si];
   setBC([{t:p.n,fn:()=>{ns=[()=>showP(false)];showS(pi);}},{t:sub.n}]);
-  gd.textContent='Di chuột hoặc chạm để xem điểm số';
+  gd.textContent='Chọn chấm tròn để xem thêm';
   draw(sub.inds.map(d=>({...d})),sub.n,null,true);
 }
 showP();
